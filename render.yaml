@@ -1,0 +1,50 @@
+# Free tier. The instance sleeps after 15 minutes idle and the next request
+# waits roughly a minute while the container starts again — acceptable for a
+# portfolio demo, not for anything a person is waiting on.
+#
+# The database is NOT defined here: it already exists on Neon (database
+# `ecommerce`), migrated and seeded. Only DATABASE_URL has to be filled in.
+services:
+  - type: web
+    name: tokonusa-api
+    runtime: docker
+    rootDir: backend
+    plan: free
+    region: singapore
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: "Toko Nusa"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: MIDTRANS_IS_PRODUCTION
+        value: "false"
+      # Filled in Render's dashboard — never committed.
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      # Optional. Without them the catalogue, cart and admin all work; only the
+      # payment step and live shipping quotes are unavailable.
+      - key: MIDTRANS_SERVER_KEY
+        sync: false
+      - key: MIDTRANS_CLIENT_KEY
+        sync: false
+      - key: RAJAONGKIR_API_KEY
+        sync: false

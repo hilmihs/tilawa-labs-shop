@@ -1,0 +1,5 @@
+.env
+storage/framework
+storage/logs
+tests
+.phpunit.cache
