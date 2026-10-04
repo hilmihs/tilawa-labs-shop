@@ -7,4 +7,3 @@
 /frontend/.next/
 /frontend/.env.local
 /frontend/tsconfig.tsbuildinfo
-node_modules/
