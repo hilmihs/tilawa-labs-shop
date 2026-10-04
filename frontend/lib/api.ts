@@ -4,6 +4,7 @@ import {
   loadMockOrder,
   saveMockOrder
 } from "@/lib/mock-checkout";
+import { DEMO_CATALOGUE } from "@/lib/demo-catalogue";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
 
@@ -42,13 +43,25 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const data = await request<{ data: Product[] }>("/products", { next: { revalidate: 60 } });
-  return data.data;
+  // Same degradation the shipping quote already uses: prefer the API, fall back
+  // to the seeded catalogue so the storefront is browsable with no backend.
+  try {
+    const data = await request<{ data: Product[] }>("/products", { next: { revalidate: 60 } });
+    return data.data.length > 0 ? data.data : DEMO_CATALOGUE;
+  } catch {
+    return DEMO_CATALOGUE;
+  }
 }
 
 export async function getProduct(slug: string): Promise<Product> {
-  const data = await request<{ data: Product }>(`/products/${slug}`, { next: { revalidate: 60 } });
-  return data.data;
+  try {
+    const data = await request<{ data: Product }>(`/products/${slug}`, { next: { revalidate: 60 } });
+    return data.data;
+  } catch {
+    const local = DEMO_CATALOGUE.find((p) => p.slug === slug);
+    if (local) return local;
+    throw new Error(`Unknown product: ${slug}`);
+  }
 }
 
 export async function quoteShipping(payload: {

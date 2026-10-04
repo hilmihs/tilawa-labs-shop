@@ -8,8 +8,10 @@ component); this repository name is just the portfolio slug.
 AI-assisted development: I used an AI coding assistant while building this, and reviewed and
 tested the result myself.
 
-There is **no live demo yet**. A Render deployment is prepared but not running — see
-[Deployment status](#deployment-status).
+**Live storefront: https://tilawa-labs-shop.vercel.app** — the Next.js half only. The Laravel
+API is not hosted, so the catalogue falls back to the seeded product list and checkout stays in
+the demo mode described under [Honest scope](#honest-scope). See
+[Deployment status](#deployment-status) for what that means and why.
 
 ## What it does
 
@@ -123,7 +125,15 @@ Test coverage is thin and I would not describe it otherwise: two feature tests
 
 ## Deployment status
 
-Not deployed. `render.yaml` at the repository root is written and ready — `runtime: docker`,
+**Frontend: deployed.** The storefront runs on Vercel at
+https://tilawa-labs-shop.vercel.app. With no API reachable, `getProducts` and `getProduct` in
+`frontend/lib/api.ts` fall back to `frontend/lib/demo-catalogue.ts` — eight products generated
+from `backend/database/seeders/ProductSeeder.php`, so the demo shows exactly what a freshly
+seeded backend would serve. This is the same degradation `quoteShipping` already used for
+shipping zones. Nothing is faked beyond that: checkout, orders and auth behave as the Honest
+scope section describes.
+
+**Backend: not deployed.** `render.yaml` at the repository root is written and ready — `runtime: docker`,
 `rootDir: backend`, `plan: free`, `region: singapore`, `healthCheckPath: /up`, with `APP_KEY`,
 `APP_URL`, `FRONTEND_URL`, `DATABASE_URL` and the Midtrans/RajaOngkir keys marked
 `sync: false` so they are entered in the dashboard and never committed. Its own header comment
